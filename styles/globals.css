@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-input,textarea{
-    @apply border-2 border-gray-300 p-1 w-full  resize-none
+input,textarea, select{
+    @apply border-2 border-gray-300 p-1 w-[50%]  resize-none
 
 }
 
-input:focus, textarea:focus{
+input:focus, textarea:focus, select:focus{
     @apply border-blue-900 outline-none
 }
 
@@ -25,7 +25,7 @@ h1{
 }
 
 table.basic{
-    @apply w-full bg-white rounded-sm shadow-md;
+    @apply w-[60%] bg-white rounded-sm shadow-md;
 }
 table.basic thead tr td,
 table.basic thead tr th

@@ -2,12 +2,14 @@ import clientPromise from "@/lib/mongodb"
 import { mongooseConnect } from "@/lib/mongoose"
 import { Product } from "@/models/Product"
 import mongoose from "mongoose"
+import { isAdminRequest } from "./auth/[...nextauth]"
 
 export default async function handle(req, res) {
 
    
     const {method}=req
     await mongooseConnect()
+    await isAdminRequest(req,res)
 
 
     if(method === 'GET'){
@@ -21,18 +23,18 @@ export default async function handle(req, res) {
         }
     }
     if(method=='POST'){
-        const {title,description, price}=req.body
+        const {title,description, price,category,properties,url}=req.body
         console.log('from server',title,description,price)
         const productDoc=await Product.create({
-            title, description, price
+            title, description, price,category,properties,url
         })
        res.send(productDoc)
     }
 
     if(method==='PUT'){
-        const {title,description, price,_id}=req.body
+        const {title,description, price,category,properties,url,_id}=req.body
         console.log('from server',title,description,price)
-       await Product.updateOne({_id},{title,description,price})
+       await Product.updateOne({_id},{title,description,price,category,url,properties})
        res.json(true)
         }
 

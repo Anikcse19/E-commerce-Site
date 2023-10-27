@@ -1,20 +1,25 @@
-// import multiparty from 'multiparty'
+import { mongooseConnect } from "@/lib/mongoose"
+import { isAdminRequest } from "./auth/[...nextauth]"
+import { Product } from "@/models/Product"
 
 
-// export default async function handle(req,res){
+
+export default async function handle(req,res){
     
-//     const form=new multiparty.Form()
 
-//     const {fields, files}=await new Promise((resolve,reject)=>{
-//         form.parse(req,(err, fields,files)=>{
-//             if(err) reject(err)
-//             resolve({fields,files})
-//         })
-//     })
-//     console.log('length:', files.file.length);
+    console.log('api hittt')
+
+    const {method}=req
+    await mongooseConnect()
+    // await isAdminRequest(req,res)
+
+    if(method=='POST'){
+        const {url,title,price}=req.body
+        
+        const productDoc=await Product.create({url,title,price})
+        console.log('imgurl',productDoc)
+       res.send(productDoc)
+    }
    
-// }
+}
 
-// export const config={
-//     api:{bodyParser:false}
-// }

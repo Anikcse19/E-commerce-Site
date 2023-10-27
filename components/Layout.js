@@ -1,15 +1,17 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { signIn, useSession } from "next-auth/react";
-import React from "react";
+import React, { useState } from "react";
 import Nav from "./Nav";
 
 const layout = ({ children }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  
+  const [showNav,setShowNav]=useState(false)
   const { data: session } = useSession();
 
   console.log(session);
   if (!session) {
     return (
-      <div className="bg-blue-800 w-screen h-screen flex items-center">
+      <div className="bg-blue-200 w-screen h-screen flex items-center">
         <div className="text-center w-full">
           <button
             onClick={() => {
@@ -24,11 +26,19 @@ const layout = ({ children }) => {
     );
   } else if (session) {
     return (
-      <div className="bg-blue-800 min-h-screen flex">
-        <Nav />
-        <div className="bg-white flex-grow my-2 rounded-md p-2">
+      <div className="bg-gray-200 min-h-screen flex">
+        <Nav showNav={showNav} />
+        <div className="p-2 block md:hidden">
+          <button onClick={()=>setShowNav(true)}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+</svg>
+
+          </button>
+        </div>
+        <div className="bg-white flex-grow m-2 rounded-md p-2">
           <div>
-            <h2> {children}</h2>
+             {children}
           </div>
         </div>
       </div>
