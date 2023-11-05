@@ -1,37 +1,61 @@
-import { MongoDBAdapter } from "@auth/mongodb-adapter"
-import NextAuth, { getServerSession } from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import clientPromise from "@/lib/mongodb"
+import { mongooseConnect } from "@/lib/mongoose";
+import { User } from "@/models/user";
+import NextAuth from "next-auth/next"
+import bcrypt from "bcryptjs"
+// import { CredentialsProvider } from "next-auth/providers/credentials"
+import CredentialsProvider from "next-auth/providers/credentials";
 
-const adminEmails=['anikdebcse@gmail.com']
-export const authOptions = {
-  // Configure one or more authentication providers
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
-    }),
-    // ...add more providers here
-  ],
-  adapter: MongoDBAdapter(clientPromise),
-  callbacks: {
-    session: ({session,token,user}) => {
-      if (adminEmails.includes(session?.user?.email)) {
-        return session;
-      } else {
-        return false;
-      }
-    },
-  },
+ const authOptions={
+    providers:[
+        CredentialsProvider({
+            name:'credentials',
+            credentials:{},
+
+
+            async authorize(credentials){
+
+               try {
+                const {email,password}=credentials
+                console.log('login details',email)
+
+                await mongooseConnect()
+                const userDoc=await User.findOne({email})
+
+                console.log(userDoc)
+
+                if(!userDoc){
+                    console.log('hii')
+                    return null
+                }
+
+                const passwordMatch=await bcrypt.compare(password,userDoc.password)
+                console.log('password match?',passwordMatch)
+
+                if(!passwordMatch){
+                    console.log('hi')
+                    return null
+                }
+                return userDoc
+               } catch (error) {
+                console.log('error',error)
+               }
+                
+            }
+        })
+    ],
+
+    session: {
+        strategy: "jwt",
+      },
+      secret: process.env.NEXTAUTH_SECRET,
+      pages: {
+        signIn: "/login",
+      },
 }
+
+
+// const handler= NextAuth(authOptions)
 
 export default NextAuth(authOptions)
 
-export async function isAdminRequest(req,res) {
-  const session = await getServerSession(req,res,authOptions);
-  if (!adminEmails.includes(session?.user?.email)) {
-    res.status(401);
-    // res.end();
-    throw 'not an admin';
-  }
-}
+// export {handler as GET, handler as POST}

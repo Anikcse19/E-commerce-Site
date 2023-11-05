@@ -2,6 +2,7 @@
 import { signIn, useSession } from "next-auth/react";
 import React, { useState } from "react";
 import Nav from "./Nav";
+import RegistrationForm from "./RegistrationForm";
 
 const layout = ({ children }) => {
   
@@ -12,7 +13,7 @@ const layout = ({ children }) => {
   if (!session) {
     return (
       <div className="bg-blue-200 w-screen h-screen flex items-center">
-        <div className="text-center w-full">
+        {/* <div className="text-center w-full">
           <button
             onClick={() => {
               signIn("google");
@@ -21,7 +22,8 @@ const layout = ({ children }) => {
           >
             Log in with Google
           </button>
-        </div>
+        </div> */}
+        <RegistrationForm/>
       </div>
     );
   } else if (session) {

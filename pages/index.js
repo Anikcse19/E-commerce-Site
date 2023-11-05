@@ -6,6 +6,7 @@ import { FidgetSpinner } from "react-loader-spinner";
 export default function Home() {
 
   const {data:session}=useSession()
+  console.log('session',session)
 
   return  <Layout>
   <div className="flex justify-between p-2 text-blue-900">
